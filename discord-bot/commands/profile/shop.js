@@ -39,7 +39,7 @@ module.exports = {
     const menu = new StringSelectMenuBuilder()
       .setCustomId('shop_cat')
       .setPlaceholder('📂 Select category…')
-      .addOptions(CATEGORIES.map(c => ({ label: CAT_NAMES[c].replace(/^.{2}/, '').trim(), value: c, emoji: CAT_NAMES[c][0] })));
+      .addOptions(CATEGORIES.map(c => ({ label: CAT_NAMES[c].replace(/^.{2}/, '').trim(), value: c, emoji: TYPE_EMOJI[c] })));
 
     const row   = new ActionRowBuilder().addComponents(menu);
     const reply = await interaction.reply({ embeds: [buildEmbed('boost')], components: [row], fetchReply: true });
