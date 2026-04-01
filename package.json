@@ -2,11 +2,11 @@
   "name": "discord-economy-bot",
   "version": "2.0.0",
   "description": "Advanced Discord Economy & Gambling Bot — No database needed",
-  "main": "index.js",
+  "main": "discord-bot/index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "deploy": "node deploy-commands.js"
+    "start": "node discord-bot/index.js",
+    "dev": "nodemon discord-bot/index.js",
+    "deploy": "node discord-bot/deploy-commands.js"
   },
   "dependencies": {
     "discord.js": "^14.14.1",
