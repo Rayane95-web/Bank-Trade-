@@ -22,7 +22,7 @@ module.exports = {
       .addFields(
         { name: '🏷️ Name', value: client.user.username, inline: true },
         { name: '🔢 Version', value: config.version, inline: true },
-        { name: '👨‍💻 Developer', value: config.developer, inline: true },
+        { name: '👨‍💻 Developer', value: config.developer.name, inline: true },
         { name: '⏱️ Uptime', value: formatUptime(client.uptime), inline: true },
         { name: '🌐 Servers', value: `${client.guilds.cache.size}`, inline: true },
         { name: '👥 Users', value: `${client.users.cache.size}`, inline: true },
