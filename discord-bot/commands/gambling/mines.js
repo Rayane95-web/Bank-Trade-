@@ -47,7 +47,8 @@ module.exports = {
         const rows = [];
         for (let r = 0; r < 5; r++) {
           const row = new ActionRowBuilder();
-          for (let c = 0; c < 5; c++) {
+          const cols = r === 4 ? 4 : 5;
+          for (let c = 0; c < cols; c++) {
             const idx = r * 5 + c;
             let label = '⬜', style = ButtonStyle.Secondary, dis = disabled;
             if (revealed[idx] || showAll) {
@@ -57,11 +58,13 @@ module.exports = {
             }
             row.addComponents(new ButtonBuilder().setCustomId(`mine_${idx}`).setLabel(label).setStyle(style).setDisabled(dis));
           }
+          if (r === 4) {
+            row.addComponents(
+              new ButtonBuilder().setCustomId('mine_cashout').setLabel(`💰 Cash Out (${calcMulti(revCount, mineN).toFixed(2)}x)`).setStyle(ButtonStyle.Primary).setDisabled(disabled || revCount === 0)
+            );
+          }
           rows.push(row);
         }
-        rows.push(new ActionRowBuilder().addComponents(
-          new ButtonBuilder().setCustomId('mine_cashout').setLabel(`💰 Cash Out (${calcMulti(revCount, mineN).toFixed(2)}x)`).setStyle(ButtonStyle.Primary).setDisabled(disabled || revCount === 0)
-        ));
         return rows;
       };
 
