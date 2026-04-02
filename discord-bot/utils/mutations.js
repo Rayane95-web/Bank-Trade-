@@ -39,11 +39,23 @@ const MUTATIONS = [
   { id: 'celestial',    name: '🌠 Celestial',       tier: 'Legendary', weight: 1,  desc: '3× XP gain for 2 hours'              },
 
   // ── Mythic (total weight ~0.5) ────────────────────────────────────────────
-  { id: 'omnipotent',   name: '🌈 Omnipotent',      tier: 'Mythic',    weight: 0.3,desc: 'All bonuses ×2 for 30 mins'          },
-  { id: 'shadow',       name: '🖤 Shadow',           tier: 'Mythic',    weight: 0.2,desc: '/rob always succeeds (1 use)'        },
+  { id: 'omnipotent',   name: '🌈 Omnipotent',      tier: 'Mythic',    weight: 0.3,  desc: 'All bonuses ×2 for 30 mins'                              },
+  { id: 'shadow',       name: '🖤 Shadow',           tier: 'Mythic',    weight: 0.2,  desc: '/rob always succeeds (1 use)'                            },
+
+  // ── New mutations ─────────────────────────────────────────────────────────
+  { id: 'red_moon',     name: '🌕 Red Moon',         tier: 'Rare',      weight: 5,    desc: '+100% coin multiplier for 1 hour',         color: 'red',        duration: 3600000,   ability: 'coin_multiplier_2x'    },
+  { id: 'admin',        name: '👑 Admin',             tier: 'SECRET',    weight: 0.001,desc: 'ALL abilities combined (permanent)',        color: 'gold',       duration: null,      ability: 'all_permanent'         },
+  { id: 'galaxy',       name: '🌌 Galaxy',            tier: 'Epic',      weight: 3,    desc: '+3× XP gain for 2 hours',                  color: 'purple',     duration: 7200000,   ability: 'xp_3x'                 },
+  { id: 'candy',        name: '🍬 Candy',             tier: 'Uncommon',  weight: 8,    desc: '+50% gambling win chance for 1 hour',      color: 'pink',       duration: 3600000,   ability: 'gamble_win_50'         },
+  { id: 'inferno',      name: '🔥 Inferno',           tier: 'Rare',      weight: 6,    desc: '+75% work earnings for 1.5 hours',         color: 'orange',     duration: 5400000,   ability: 'work_earnings_75'      },
+  { id: 'frost',        name: '🧊 Frost',             tier: 'Epic',      weight: 4,    desc: 'Immune to /rob for 12 hours',              color: 'cyan',       duration: 43200000,  ability: 'rob_immune_12h'        },
+  { id: 'nebula',       name: '🔮 Nebula',            tier: 'Legendary', weight: 1.5,  desc: '+2× level progression for 3 hours',        color: 'dark_purple',duration: 10800000,  ability: 'level_2x'              },
+  { id: 'radiant',      name: '☀️ Radiant',           tier: 'Uncommon',  weight: 9,    desc: '+25% daily reward for 24 hours',           color: 'yellow',     duration: 86400000,  ability: 'daily_25'              },
+  { id: 'void_new',     name: '🕳️ Void',              tier: 'Legendary', weight: 1.5,  desc: 'Steal 10% of robber\'s coins when robbed', color: 'black',      duration: null,      ability: 'void_counter'          },
+  { id: 'stellar',      name: '⭐ Stellar',            tier: 'Rare',      weight: 5,    desc: '+50% XP and coins for 1 hour',             color: 'silver',     duration: 3600000,   ability: 'xp_coin_50'            },
 
   // ── SECRET (0.01%) ────────────────────────────────────────────────────────
-  { id: 'admin_sk',     name: '🔱 Admin SK',        tier: 'SECRET',    weight: 0.01, desc: 'Permanent Rob Shield + all Mythic bonuses + golden aura' },
+  { id: 'admin_sk',     name: '🔱 Admin SK',          tier: 'SECRET',    weight: 0.01, desc: 'Permanent Rob Shield + all Mythic bonuses + golden aura'  },
 ];
 
 const TIER_COLORS = {
