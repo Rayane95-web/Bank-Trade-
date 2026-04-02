@@ -92,6 +92,12 @@ module.exports = {
     { id: 'shield',       name: '🛡️ Rob Shield',    weight: 8,  itemReward: 'shield'        },
     { id: 'lucky_charm',  name: '🍀 Lucky Charm',   weight: 5,  itemReward: 'lucky_charm'   },
     { id: 'iphone17',     name: '📱 iPhone 17',     weight: 2,  itemReward: 'iphone17'      },
+    // Mutation drops from cart
+    { id: 'mut_candy',    name: '🍬 Candy Mutation',   weight: 4,  mutationReward: 'candy'    },
+    { id: 'mut_radiant',  name: '☀️ Radiant Mutation', weight: 3,  mutationReward: 'radiant'  },
+    { id: 'mut_stellar',  name: '⭐ Stellar Mutation',  weight: 3,  mutationReward: 'stellar'  },
+    { id: 'mut_inferno',  name: '🔥 Inferno Mutation',  weight: 2,  mutationReward: 'inferno'  },
+    { id: 'mut_red_moon', name: '🌕 Red Moon Mutation', weight: 2,  mutationReward: 'red_moon' },
   ],
 
   // Lucky block loot table
@@ -106,5 +112,11 @@ module.exports = {
     { id: 'yacht',        name: '🛥️ Yacht',             weight: 2,    itemReward: 'yacht'           },
     { id: 'nothing',      name: '💨 Nothing',           weight: 8,    coinReward: [0, 0]            },
     { id: 'admin_sk',     name: '🔱 Admin SK',          weight: 0.01, itemReward: 'admin_sk'        }, // 0.01%
+    // Mutation drops from lucky block (higher-tier)
+    { id: 'mut_frost',    name: '🧊 Frost Mutation',    weight: 3,    mutationReward: 'frost'       },
+    { id: 'mut_galaxy',   name: '🌌 Galaxy Mutation',   weight: 2,    mutationReward: 'galaxy'      },
+    { id: 'mut_nebula',   name: '🔮 Nebula Mutation',   weight: 1,    mutationReward: 'nebula'      },
+    { id: 'mut_void',     name: '🕳️ Void Mutation',     weight: 1,    mutationReward: 'void_new'    },
+    { id: 'mut_admin',    name: '👑 Admin Mutation',    weight: 0.001,mutationReward: 'admin'       }, // 0.001%
   ],
 };
