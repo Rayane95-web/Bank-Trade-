@@ -141,7 +141,7 @@ async function generateProfileCard(discordUser, userData) {
   // ── Footer line ────────────────────────────────────────────────────────────
   ctx.fillStyle = 'rgba(255,255,255,0.3)';
   ctx.font = '12px sans-serif';
-  ctx.fillText(`Member since ${userData.createdAt.toDateString()}`, tx, H - 14);
+  ctx.fillText(`Member since ${new Date(userData.createdAt).toDateString()}`, tx, H - 14);
 
   return canvas.toBuffer('image/png');
 }
