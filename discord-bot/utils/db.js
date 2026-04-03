@@ -39,18 +39,35 @@ function defaultUser(userId, guildId, username) {
     guildId,
     username: username || 'Unknown',
 
-    wallet:     100,
-    bank:       0,
-    bankLimit:  10000,
+    wallet:      100,
+    bank:        0,
+    bankLimit:   10000,
     totalEarned: 0,
+    totalSpent:  0,
 
     xp:      0,
     level:   1,
     totalXp: 0,
 
-    inventory: [],
-    badges:    [],
-    quests:    [],
+    inventory:    [],
+    badges:       [],
+    achievements: [],
+    quests:       [],
+
+    // Social / guild
+    guildId_economy: null,   // guild/clan membership (separate from Discord guildId)
+    referrerId:      null,   // userId of who referred this user
+    referrals:       [],     // userIds this user has referred
+
+    // Passive income
+    investments: [],         // { type, amount, startedAt, matureAt }
+
+    // Engagement
+    streak:       0,         // daily login streak
+    lastLogin:    null,      // ISO date of last login
+    playtime:     0,         // total days active (incremented on login)
+    favoriteGame: null,      // most-played game id
+    rank:         null,      // cached server wealth rank
 
     cooldowns: {
       daily:  null,
@@ -68,6 +85,8 @@ function defaultUser(userId, guildId, username) {
       messagesCount: 0,
       commandsUsed:  0,
       dailyStreak:   0,
+      // per-game play counts for favoriteGame tracking
+      gameCounts:    {},
     },
 
     banned:    false,
@@ -118,6 +137,31 @@ function getLeaderboard(guildId, sortFn, limit = 10) {
     .slice(0, limit);
 }
 
+/** Get ALL users for a guild (including banned). */
+function getAllUsers(guildId) {
+  return Object.values(store).filter(u => u.guildId === guildId);
+}
+
+/** Get the full raw store (for export). */
+function getRawStore() {
+  return store;
+}
+
+/** Overwrite the full store (for import). */
+function setRawStore(data) {
+  store = data;
+  save();
+}
+
+/** Compute and cache wealth rank for every user in a guild. */
+function refreshRanks(guildId) {
+  const users = Object.values(store)
+    .filter(u => u.guildId === guildId && !u.banned)
+    .sort((a, b) => (b.wallet + b.bank) - (a.wallet + a.bank));
+  users.forEach((u, i) => { u.rank = i + 1; });
+  save();
+}
+
 // ── Item helpers (replicate Mongoose virtuals) ───────────────────────────────
 
 function hasActiveItem(user, itemId) {
@@ -131,4 +175,9 @@ function xpForNextLevel(user) {
   return user.level * 100;
 }
 
-module.exports = { init, getUser, saveUser, deleteUser, getLeaderboard, hasActiveItem, xpForNextLevel, save };
+module.exports = {
+  init, getUser, saveUser, deleteUser,
+  getLeaderboard, getAllUsers,
+  getRawStore, setRawStore, refreshRanks,
+  hasActiveItem, xpForNextLevel, save,
+};
