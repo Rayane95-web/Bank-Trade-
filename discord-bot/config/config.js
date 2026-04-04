@@ -50,29 +50,54 @@ module.exports = {
 
   // ─── SHOP ─────────────────────────────────────────────────────────────────
   shop: [
-    // Boosts
-    { id: 'xp_boost',     name: '⚡ XP Boost',        price: 500,        description: 'Double XP gain for 1 hour',                   type: 'boost',      duration: 3600000   },
-    { id: 'multiplier',   name: '💎 Coin Multiplier', price: 1000,       description: '1.5× coins from /work for 2 hours',            type: 'boost',      duration: 7200000   },
-    { id: 'crime_pass',   name: '🎭 Crime Pass',       price: 1500,       description: '+20% success chance on /crime for 4 hours',    type: 'boost',      duration: 14400000  },
-    { id: 'daily_boost',  name: '📅 Daily Boost',      price: 800,        description: 'Doubles your next /daily reward (consumed on use)',type: 'boost',   duration: 86400000  },
+    // ── Boosts ──────────────────────────────────────────────────────────────
+    { id: 'xp_boost',        name: '⚡ XP Boost',           price: 500,        description: 'Double XP gain for 1 hour',                              type: 'boost',      duration: 3600000   },
+    { id: 'multiplier',      name: '💎 Coin Multiplier',    price: 1000,       description: '1.5× coins from /work for 2 hours',                      type: 'boost',      duration: 7200000   },
+    { id: 'crime_pass',      name: '🎭 Crime Pass',          price: 1500,       description: '+20% success chance on /crime for 4 hours',              type: 'boost',      duration: 14400000  },
+    { id: 'daily_boost',     name: '📅 Daily Boost',         price: 800,        description: 'Doubles your next /daily reward (consumed on use)',       type: 'boost',      duration: 86400000  },
+    { id: 'luck_boost',      name: '🍀 Luck Boost',          price: 1200,       description: '+15% win chance on all gambling for 2 hours',            type: 'boost',      duration: 7200000   },
+    { id: 'robbery_boost',   name: '🗡️ Robbery Boost',      price: 2000,       description: '+25% success chance on /rob for 3 hours',                type: 'boost',      duration: 10800000  },
+    { id: 'crime_mastery',   name: '🎩 Crime Mastery',       price: 3500,       description: '+40% success chance on /crime and double payout for 2h', type: 'boost',      duration: 7200000   },
+    { id: 'xp_surge',        name: '🌩️ XP Surge',           price: 2500,       description: '3× XP gain for 30 minutes — great for levelling fast',   type: 'boost',      duration: 1800000   },
+    { id: 'work_overdrive',  name: '⚙️ Work Overdrive',      price: 1800,       description: '2× coins from /work for 3 hours',                        type: 'boost',      duration: 10800000  },
 
-    // Protection
-    { id: 'shield',       name: '🛡️ Rob Shield',      price: 750,        description: 'Blocks all /rob attempts for 6 hours',          type: 'protection', duration: 21600000  },
-    { id: 'lucky_charm',  name: '🍀 Lucky Charm',      price: 300,        description: '+10% win chance on gambling for 3 hours',       type: 'boost',      duration: 10800000  },
+    // ── Protection ──────────────────────────────────────────────────────────
+    { id: 'shield',          name: '🛡️ Rob Shield',         price: 750,        description: 'Blocks all /rob attempts for 6 hours',                   type: 'protection', duration: 21600000  },
+    { id: 'lucky_charm',     name: '🍀 Lucky Charm',         price: 300,        description: '+10% win chance on gambling for 3 hours',                type: 'boost',      duration: 10800000  },
+    { id: 'vault',           name: '🔒 Vault',               price: 5000,       description: 'Locks your bank — no withdrawals can be forced for 12h', type: 'protection', duration: 43200000  },
+    { id: 'decoy',           name: '🪆 Decoy',               price: 3000,       description: 'Next /rob attempt against you steals 0 coins (1 use)',    type: 'protection', duration: null      },
+    { id: 'invisibility_cloak', name: '🫥 Invisibility Cloak', price: 8000,    description: 'Hides you from the leaderboard for 24 hours',             type: 'protection', duration: 86400000  },
 
-    // Permanent upgrades
-    { id: 'bank_upgrade', name: '🏦 Bank Upgrade',     price: 2000,       description: 'Permanently increases bank limit by +10,000',   type: 'permanent'                       },
+    // ── Permanent upgrades ───────────────────────────────────────────────────
+    { id: 'bank_upgrade',    name: '🏦 Bank Upgrade',        price: 2000,       description: 'Permanently increases bank limit by +10,000',            type: 'permanent'                       },
+    { id: 'bank_upgrade_xl', name: '🏦 Bank Upgrade XL',     price: 15000,      description: 'Permanently increases bank limit by +100,000',           type: 'permanent'                       },
+    { id: 'mansion',         name: '🏰 Mansion',             price: 500000,     description: 'A 50-room mansion. Permanent prestige upgrade.',          type: 'permanent'                       },
+    { id: 'private_island',  name: '🏝️ Private Island',      price: 2500000,    description: 'Your own island. Permanent prestige upgrade.',            type: 'permanent'                       },
+    { id: 'space_station',   name: '🛸 Space Station',        price: 25000000,   description: 'You own a space station. Permanent prestige upgrade.',    type: 'permanent'                       },
 
-    // Luxury / flex items (flex items — no functional effect, just prestige value)
-    { id: 'iphone17',     name: '📱 iPhone 17',        price: 1299,       description: 'The latest iPhone. Flex on everyone. (Prestige item)', type: 'flex'                      },
-    { id: 'yacht',        name: '🛥️ Yacht',            price: 500000,     description: 'A luxury superyacht. The ultimate flex. (Prestige item)', type: 'flex'                   },
-    { id: 'private_jet',  name: '✈️ Private Jet',      price: 2500000,    description: 'Your own private jet. Insane flex. (Prestige item)',     type: 'flex'                    },
-    { id: 'mansion',      name: '🏰 Mansion',          price: 10000000,   description: 'A 50-room mansion. You made it. (Prestige item)',         type: 'flex'                    },
-    { id: 'space_rocket', name: '🚀 Space Rocket',     price: 100000000,  description: 'Your own rocket. Literally a billionaire. (Prestige item)',type: 'flex'                   },
+    // ── Flex / Prestige ──────────────────────────────────────────────────────
+    { id: 'iphone17',        name: '📱 iPhone 17',           price: 1299,       description: 'The latest iPhone. Flex on everyone.',                   type: 'flex'                            },
+    { id: 'diamond_ring',    name: '💍 Diamond Ring',        price: 25000,      description: 'A flawless diamond ring. Pure flex.',                    type: 'flex'                            },
+    { id: 'gold_watch',      name: '⌚ Gold Watch',          price: 75000,      description: 'A solid gold Rolex. Dripping in wealth.',                type: 'flex'                            },
+    { id: 'platinum_card',   name: '💳 Platinum Card',       price: 150000,     description: 'No limit. No questions. Pure prestige.',                 type: 'flex'                            },
+    { id: 'lamborghini',     name: '🏎️ Lamborghini',         price: 350000,     description: 'A Lamborghini Aventador. Vroom vroom.',                  type: 'flex'                            },
+    { id: 'yacht',           name: '🛥️ Yacht',               price: 500000,     description: 'A luxury superyacht. The ultimate flex.',                type: 'flex'                            },
+    { id: 'helicopter',      name: '🚁 Helicopter',          price: 1200000,    description: 'Your personal helicopter. Skip the traffic.',            type: 'flex'                            },
+    { id: 'private_jet',     name: '✈️ Private Jet',         price: 2500000,    description: 'Your own private jet. Insane flex.',                     type: 'flex'                            },
+    { id: 'space_rocket',    name: '🚀 Space Rocket',        price: 50000000,   description: 'Your own rocket. Literally a billionaire.',              type: 'flex'                            },
 
-    // Gacha / RNG
-    { id: 'cart',         name: '🛒 Mystery Cart',     price: 2500,       description: 'Roll RNG for a random item + possible mutation! Use /opencart after buying.', type: 'gacha' },
-    { id: 'lucky_block',  name: '🟨 Lucky Block',      price: 5000,       description: 'Smash for a rare reward, mutations, or the legendary Admin SK (0.01%)! Use /openblock.', type: 'gacha' },
+    // ── Gacha / RNG ──────────────────────────────────────────────────────────
+    { id: 'cart',            name: '🛒 Mystery Cart',        price: 2500,       description: 'Roll RNG for a random item + possible mutation! Use /opencart after buying.',          type: 'gacha' },
+    { id: 'lucky_block',     name: '🟨 Lucky Block',         price: 5000,       description: 'Smash for a rare reward, mutations, or the legendary Admin SK (0.01%)! Use /openblock.', type: 'gacha' },
+    { id: 'mega_cart',       name: '🛒✨ Mega Cart',         price: 12000,      description: 'A supercharged Mystery Cart with 3× better mutation odds! Use /opencart.',            type: 'gacha' },
+    { id: 'ultimate_block',  name: '🟧 Ultimate Block',      price: 25000,      description: 'A Lucky Block with boosted legendary & mythic mutation rates! Use /openblock.',       type: 'gacha' },
+
+    // ── Seasonal / Holiday ───────────────────────────────────────────────────
+    { id: 'candy_cane',      name: '🍬 Candy Cane',          price: 100,        description: 'A festive candy cane. Sweet seasonal flex.',             type: 'seasonal'                        },
+    { id: 'christmas_tree',  name: '🎄 Christmas Tree',      price: 500,        description: 'Deck the halls! Seasonal prestige item.',                type: 'seasonal'                        },
+    { id: 'fireworks',       name: '🎆 Fireworks',           price: 750,        description: 'Celebrate in style. Seasonal flex item.',                type: 'seasonal'                        },
+    { id: 'gift_box',        name: '🎁 Gift Box',            price: 1000,       description: 'A mystery gift. Could be anything! (Seasonal gacha)',    type: 'seasonal'                        },
+    { id: 'snowglobe',       name: '🔮 Snow Globe',          price: 2000,       description: 'A rare collectible snow globe. Seasonal prestige.',      type: 'seasonal'                        },
   ],
 
   quests: [

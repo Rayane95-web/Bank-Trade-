@@ -175,9 +175,61 @@ function xpForNextLevel(user) {
   return user.level * 100;
 }
 
+// ── Guild helpers ─────────────────────────────────────────────────────────────
+
+const GUILDS_FILE_PATH = path.join(__dirname, '../data/guilds.json');
+
+function loadGuilds() {
+  if (!fs.existsSync(GUILDS_FILE_PATH)) return {};
+  try { return JSON.parse(fs.readFileSync(GUILDS_FILE_PATH, 'utf8')); } catch { return {}; }
+}
+
+function saveGuilds(data) {
+  fs.mkdirSync(path.dirname(GUILDS_FILE_PATH), { recursive: true });
+  fs.writeFileSync(GUILDS_FILE_PATH, JSON.stringify(data, null, 2), 'utf8');
+}
+
+/**
+ * Returns the ISO date string for the most recent Monday (YYYY-MM-DD).
+ * Used as the weekly-reset key.
+ */
+function currentWeekKey() {
+  const now = new Date();
+  const day = now.getUTCDay(); // 0=Sun, 1=Mon … 6=Sat
+  const diff = (day === 0 ? -6 : 1 - day); // days back to Monday
+  const monday = new Date(now);
+  monday.setUTCDate(now.getUTCDate() + diff);
+  return monday.toISOString().slice(0, 10); // "YYYY-MM-DD"
+}
+
+/**
+ * Record a contribution to a guild's weekly deposit tracker.
+ * Resets the counter automatically every Monday.
+ *
+ * @param {string} guildEconomyId  - The economy guild ID (key in guilds.json)
+ * @param {number} netAmount       - Net coins added to treasury (after tax)
+ */
+function recordGuildDeposit(guildEconomyId, netAmount) {
+  const guilds = loadGuilds();
+  const guild  = guilds[guildEconomyId];
+  if (!guild) return;
+
+  const weekKey = currentWeekKey();
+
+  // Reset if we're in a new week
+  if (guild.weeklyResetKey !== weekKey) {
+    guild.weeklyDeposits = 0;
+    guild.weeklyResetKey = weekKey;
+  }
+
+  guild.weeklyDeposits = (guild.weeklyDeposits || 0) + netAmount;
+  saveGuilds(guilds);
+}
+
 module.exports = {
   init, getUser, saveUser, deleteUser,
   getLeaderboard, getAllUsers,
   getRawStore, setRawStore, refreshRanks,
   hasActiveItem, xpForNextLevel, save,
+  loadGuilds, saveGuilds, recordGuildDeposit, currentWeekKey,
 };
