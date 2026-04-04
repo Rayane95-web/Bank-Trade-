@@ -3,23 +3,23 @@ const { formatNumber } = require('./helpers');
 const db = require('./db');
 
 /**
- * Generates a 1200×600 profile card image as a Buffer.
+ * Generates a 1200×630 profile card image as a Buffer.
  *
- * Layout (two-column):
- *  ┌─────────────────────────────────────────────────────────────────────────────┐
- *  │  [Avatar+glow]  Username  [Level badge]                                     │
- *  │                 ████████████░░░░  XP bar                                    │
- *  │                 Badges row                                                   │
- *  │─────────────────────────────────────────────────────────────────────────────│
- *  │  LEFT COLUMN (economy)          │  RIGHT COLUMN (activity & social)          │
- *  │  💰 Wallet   🏦 Bank            │  🎮 Games   🏆 Won   📊 Win Rate           │
- *  │  💎 Net Worth                   │  🔥 Streak  📅 Join  ⏱ Days Active        │
- *  │  📈 Total Earned                │  🎯 Fav Game  🏅 Rank  🧬 Mutations        │
- *  │  💸 Total Spent                 │  🎒 Items   🏆 Achievements                │
- *  └─────────────────────────────────────────────────────────────────────────────┘
+ * Layout:
+ *  ┌──────────────────────────────────────────────────────────────────────────┐
+ *  │  [Avatar+glow]  Username  [Level badge]  [Rank badge]                    │
+ *  │                 ████████████░░░░  XP bar  XP% label                      │
+ *  │──────────────────────────────────────────────────────────────────────────│
+ *  │  💰 ECONOMY (boxed)              │  📊 ACTIVITY (boxed)                  │
+ *  │  Wallet / Bank / Net Worth       │  Games / Won / Win Rate               │
+ *  │  Total Earned / Total Spent      │  Streak / Days Active / Join Date     │
+ *  │──────────────────────────────────────────────────────────────────────────│
+ *  │  ⭐ PROGRESS (boxed)             │  🎒 COLLECTION (boxed)                │
+ *  │  Level / XP / XP%               │  Items / Mutations / Achievements      │
+ *  └──────────────────────────────────────────────────────────────────────────┘
  */
 async function generateProfileCard(discordUser, userData, guildId) {
-  const W = 1200, H = 600;
+  const W = 1200, H = 630;
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext('2d');
 
@@ -35,17 +35,17 @@ async function generateProfileCard(discordUser, userData, guildId) {
 
   // ── Decorative background circles ─────────────────────────────────────────
   ctx.save();
-  ctx.globalAlpha = 0.06;
+  ctx.globalAlpha = 0.07;
   ctx.fillStyle = '#9B59B6';
-  ctx.beginPath(); ctx.arc(950, 100, 200, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(980, 90, 220, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = '#5865F2';
-  ctx.beginPath(); ctx.arc(1100, 500, 150, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(1130, 540, 160, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = '#9B59B6';
-  ctx.beginPath(); ctx.arc(100, 500, 120, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(80, 540, 130, 0, Math.PI * 2); ctx.fill();
   ctx.restore();
 
   // ── Card border ────────────────────────────────────────────────────────────
-  ctx.strokeStyle = 'rgba(155,89,182,0.35)';
+  ctx.strokeStyle = 'rgba(155,89,182,0.5)';
   ctx.lineWidth = 2;
   ctx.beginPath();
   roundRect(ctx, 1, 1, W - 2, H - 2, 24);
@@ -62,11 +62,11 @@ async function generateProfileCard(discordUser, userData, guildId) {
   ctx.fill();
 
   // ── Avatar ─────────────────────────────────────────────────────────────────
-  const avatarSize = 130;
-  const avatarCX = 50 + avatarSize / 2;
-  const avatarCY = 80 + avatarSize / 2;
+  const avatarSize = 120;
+  const avatarCX = 56 + avatarSize / 2;
+  const avatarCY = 56 + avatarSize / 2;
 
-  // Outer glow ring (animated-look gradient)
+  // Outer glow ring
   const ringGrad = ctx.createLinearGradient(
     avatarCX - avatarSize / 2, avatarCY - avatarSize / 2,
     avatarCX + avatarSize / 2, avatarCY + avatarSize / 2
@@ -77,7 +77,7 @@ async function generateProfileCard(discordUser, userData, guildId) {
 
   ctx.save();
   ctx.shadowColor = '#9B59B6';
-  ctx.shadowBlur = 28;
+  ctx.shadowBlur = 30;
   ctx.beginPath();
   ctx.arc(avatarCX, avatarCY, avatarSize / 2 + 5, 0, Math.PI * 2);
   ctx.strokeStyle = ringGrad;
@@ -102,44 +102,47 @@ async function generateProfileCard(discordUser, userData, guildId) {
     ctx.fill();
   }
 
-  // ── Header: username + level badge ────────────────────────────────────────
-  const headerX = 50 + avatarSize + 28;  // text starts after avatar
+  // ── Header: username + badges ──────────────────────────────────────────────
+  const headerX = 56 + avatarSize + 24;
 
+  // Username
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 38px sans-serif';
-  ctx.fillText(discordUser.username, headerX, 108);
+  ctx.font = 'bold 36px sans-serif';
+  ctx.fillText(discordUser.username, headerX, 90);
 
-  // Rank badge (server wealth rank)
-  const rankText = userData.rank ? `#${userData.rank}` : '#—';
-  const rankW = ctx.measureText(rankText).width + 20;
-  ctx.fillStyle = 'rgba(88,101,242,0.55)';
-  roundRect(ctx, headerX, 116, rankW, 26, 6);
-  ctx.fill();
-  ctx.fillStyle = '#c9ceff';
+  // Rank badge
+  const rankText = userData.rank ? `🏅 Rank #${userData.rank}` : '🏅 Rank #—';
   ctx.font = 'bold 14px sans-serif';
-  ctx.fillText(rankText, headerX + 10, 134);
-
-  // Level badge (top-right)
-  const levelText = `✦ Level ${userData.level}`;
-  ctx.font = 'bold 18px sans-serif';
-  const lw = ctx.measureText(levelText).width + 28;
-  const lx = W - lw - 28, ly = 28;
-  ctx.fillStyle = 'rgba(155,89,182,0.65)';
-  roundRect(ctx, lx, ly, lw, 36, 10);
+  const rankW = ctx.measureText(rankText).width + 22;
+  ctx.fillStyle = 'rgba(88,101,242,0.7)';
+  roundRect(ctx, headerX, 100, rankW, 28, 7);
   ctx.fill();
-  ctx.fillStyle = '#e8d5ff';
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText(rankText, headerX + 11, 119);
+
+  // Level badge (top-right corner)
+  const levelText = `✦ Level ${userData.level}`;
+  ctx.font = 'bold 20px sans-serif';
+  const lw = ctx.measureText(levelText).width + 32;
+  const lx = W - lw - 24, ly = 22;
+  ctx.fillStyle = 'rgba(155,89,182,0.8)';
+  roundRect(ctx, lx, ly, lw, 40, 10);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
   ctx.textAlign = 'center';
-  ctx.fillText(levelText, lx + lw / 2, ly + 25);
+  ctx.fillText(levelText, lx + lw / 2, ly + 28);
   ctx.textAlign = 'left';
 
   // ── XP bar ─────────────────────────────────────────────────────────────────
   const xpNeeded = userData.level * 100;
-  const xpPct    = Math.min((userData.xp || 0) / xpNeeded, 1);
-  const barX = headerX, barY = 152, barW = W - headerX - 36, barH = 16;
+  const xpCurrent = userData.xp || 0;
+  const xpPct    = Math.min(xpCurrent / xpNeeded, 1);
+  const barX = headerX, barY = 138, barW = W - headerX - 36, barH = 18;
 
-  // Track
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
-  roundRect(ctx, barX, barY, barW, barH, 8);
+  // Track background
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  roundRect(ctx, barX, barY, barW, barH, 9);
   ctx.fill();
 
   // Fill
@@ -148,146 +151,112 @@ async function generateProfileCard(discordUser, userData, guildId) {
     xpFill.addColorStop(0, '#9B59B6');
     xpFill.addColorStop(1, '#5865F2');
     ctx.fillStyle = xpFill;
-    roundRect(ctx, barX, barY, Math.max(barW * xpPct, 16), barH, 8);
+    roundRect(ctx, barX, barY, Math.max(barW * xpPct, 18), barH, 9);
     ctx.fill();
   }
 
-  // XP label
-  ctx.fillStyle = 'rgba(255,255,255,0.55)';
-  ctx.font = '13px sans-serif';
-  ctx.fillText(`${formatNumber(userData.xp || 0)} / ${formatNumber(xpNeeded)} XP`, barX, barY + barH + 18);
+  // XP label — large and bright
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText(
+    `${formatNumber(xpCurrent)} / ${formatNumber(xpNeeded)} XP  (${(xpPct * 100).toFixed(1)}%)`,
+    barX, barY + barH + 20
+  );
 
-  // ── Badges / achievements row ──────────────────────────────────────────────
-  const badgeY = barY + barH + 36;
-  const badges = (userData.achievements || []).slice(0, 8);
-  if (badges.length > 0) {
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
-    ctx.font = '12px sans-serif';
-    ctx.fillText('ACHIEVEMENTS', barX, badgeY);
-    badges.forEach((ach, i) => {
-      const bx = barX + i * 110;
-      ctx.fillStyle = 'rgba(155,89,182,0.3)';
-      roundRect(ctx, bx, badgeY + 6, 100, 26, 6);
-      ctx.fill();
-      ctx.fillStyle = '#e8d5ff';
-      ctx.font = '12px sans-serif';
-      const label = ach.name || ach;
-      ctx.fillText(label.length > 12 ? label.slice(0, 11) + '…' : label, bx + 6, badgeY + 24);
-    });
-    if ((userData.achievements || []).length > 8) {
-      ctx.fillStyle = 'rgba(255,255,255,0.4)';
-      ctx.font = '12px sans-serif';
-      ctx.fillText(`+${userData.achievements.length - 8} more`, barX + 8 * 110, badgeY + 24);
-    }
-  } else {
-    ctx.fillStyle = 'rgba(255,255,255,0.2)';
-    ctx.font = '13px sans-serif';
-    ctx.fillText('No achievements yet — start playing to earn badges!', barX, badgeY + 20);
-  }
-
-  // ── Divider line ───────────────────────────────────────────────────────────
-  const divY = 260;
+  // ── Horizontal divider ─────────────────────────────────────────────────────
+  const divY = 192;
   const divGrad = ctx.createLinearGradient(20, 0, W - 20, 0);
   divGrad.addColorStop(0,   'rgba(155,89,182,0)');
-  divGrad.addColorStop(0.2, 'rgba(155,89,182,0.5)');
-  divGrad.addColorStop(0.8, 'rgba(88,101,242,0.5)');
+  divGrad.addColorStop(0.15,'rgba(155,89,182,0.6)');
+  divGrad.addColorStop(0.85,'rgba(88,101,242,0.6)');
   divGrad.addColorStop(1,   'rgba(88,101,242,0)');
   ctx.fillStyle = divGrad;
-  ctx.fillRect(20, divY, W - 40, 1);
+  ctx.fillRect(20, divY, W - 40, 2);
 
-  // ── Column divider ─────────────────────────────────────────────────────────
-  const colDivX = W / 2;
-  const colDivGrad = ctx.createLinearGradient(0, divY + 10, 0, H - 20);
-  colDivGrad.addColorStop(0,   'rgba(155,89,182,0.4)');
-  colDivGrad.addColorStop(1,   'rgba(88,101,242,0.1)');
-  ctx.fillStyle = colDivGrad;
-  ctx.fillRect(colDivX, divY + 10, 1, H - divY - 30);
+  // ── Stat section layout ────────────────────────────────────────────────────
+  // Four boxes: top-left, top-right, bottom-left, bottom-right
+  const PAD   = 18;   // padding inside boxes
+  const GAP   = 14;   // gap between boxes
+  const BOX_Y1 = divY + 14;
+  const BOX_H  = 190;
+  const BOX_Y2 = BOX_Y1 + BOX_H + GAP;
+  const BOX_W  = (W - 28 - 28 - GAP) / 2;  // two columns
+  const BOX_X1 = 20;
+  const BOX_X2 = BOX_X1 + BOX_W + GAP;
 
-  // ── LEFT COLUMN: Economy stats ─────────────────────────────────────────────
-  const leftX  = 28;
-  const rightX = colDivX + 28;
-  const statsStartY = divY + 30;
-  const rowH = 72;
-
-  // Section label
-  drawSectionLabel(ctx, '💰 Economy', leftX, statsStartY);
-
-  const netWorth = (userData.wallet || 0) + (userData.bank || 0);
-  const leftStats = [
-    [
-      { label: '👛 Wallet',       value: formatNumber(userData.wallet || 0) },
-      { label: '🏦 Bank',         value: formatNumber(userData.bank || 0) },
-    ],
-    [
-      { label: '💎 Net Worth',    value: formatNumber(netWorth) },
-      { label: '📈 Total Earned', value: formatNumber(userData.totalEarned || 0) },
-    ],
-    [
-      { label: '💸 Total Spent',  value: formatNumber(userData.totalSpent || 0) },
-      { label: '🏦 Bank Limit',   value: formatNumber(userData.bankLimit || 10000) },
-    ],
-  ];
-
-  leftStats.forEach((row, ri) => {
-    const y = statsStartY + 22 + ri * rowH;
-    row.forEach((stat, ci) => {
-      drawStatCell(ctx, stat.label, stat.value, leftX + ci * 270, y);
-    });
-  });
-
-  // ── RIGHT COLUMN: Activity & social stats ─────────────────────────────────
-  drawSectionLabel(ctx, '📊 Activity', rightX, statsStartY);
-
+  // ── Compute all stats ──────────────────────────────────────────────────────
+  const netWorth    = (userData.wallet || 0) + (userData.bank || 0);
   const gamesPlayed = userData.stats?.gamesPlayed || 0;
   const gamesWon    = userData.stats?.gamesWon    || 0;
   const winRate     = gamesPlayed > 0 ? ((gamesWon / gamesPlayed) * 100).toFixed(1) : '0.0';
   const streak      = userData.streak || userData.stats?.dailyStreak || 0;
-  const joinDate    = userData.createdAt ? new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown';
-  const playtime    = userData.playtime || 0;
-  const favGame     = userData.favoriteGame
-    ? userData.favoriteGame.charAt(0).toUpperCase() + userData.favoriteGame.slice(1)
-    : 'None';
+  const joinDate    = userData.createdAt
+    ? new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : 'Unknown';
+  const daysActive  = userData.playtime || 0;
   const mutCount    = (userData.inventory || []).filter(i => i.mutationId).length;
   const itemCount   = (userData.inventory || []).filter(i => !i.mutationId).length;
   const achCount    = (userData.achievements || []).length;
 
-  const rightStats = [
-    [
-      { label: '🎮 Games Played', value: `${gamesPlayed}` },
-      { label: '🏆 Games Won',    value: `${gamesWon}` },
-      { label: '📊 Win Rate',     value: `${winRate}%` },
-    ],
-    [
-      { label: '🔥 Streak',       value: `${streak} days` },
-      { label: '📅 Joined',       value: joinDate },
-      { label: '⏱ Days Active',   value: `${playtime}` },
-    ],
-    [
-      { label: '🎯 Fav Game',     value: favGame },
-      { label: '🧬 Mutations',    value: `${mutCount}` },
-      { label: '🎒 Items',        value: `${itemCount}` },
-    ],
-    [
-      { label: '🏅 Achievements', value: `${achCount}` },
-      { label: '🤝 Referrals',    value: `${(userData.referrals || []).length}` },
-      { label: '📦 Investments',  value: `${(userData.investments || []).length}` },
-    ],
-  ];
+  // ── BOX 1 (top-left): 💰 Economy ──────────────────────────────────────────
+  drawBox(ctx, BOX_X1, BOX_Y1, BOX_W, BOX_H);
+  drawBoxTitle(ctx, '💰 Economy', BOX_X1 + PAD, BOX_Y1 + PAD + 16);
 
-  rightStats.forEach((row, ri) => {
-    const y = statsStartY + 22 + ri * (rowH - 8);
-    const colW = (W - rightX - 28) / row.length;
-    row.forEach((stat, ci) => {
-      drawStatCell(ctx, stat.label, stat.value, rightX + ci * colW, y);
-    });
-  });
+  const econStats = [
+    { label: 'Wallet',       value: `💛 ${formatNumber(userData.wallet || 0)}` },
+    { label: 'Bank',         value: `🏦 ${formatNumber(userData.bank || 0)}` },
+    { label: 'Net Worth',    value: `💎 ${formatNumber(netWorth)}` },
+    { label: 'Total Earned', value: `📈 ${formatNumber(userData.totalEarned || 0)}` },
+    { label: 'Total Spent',  value: `💸 ${formatNumber(userData.totalSpent || 0)}` },
+  ];
+  drawStatGrid(ctx, econStats, BOX_X1 + PAD, BOX_Y1 + PAD + 30, BOX_W - PAD * 2, BOX_H - PAD * 2 - 30);
+
+  // ── BOX 2 (top-right): 📊 Activity ────────────────────────────────────────
+  drawBox(ctx, BOX_X2, BOX_Y1, BOX_W, BOX_H);
+  drawBoxTitle(ctx, '📊 Activity', BOX_X2 + PAD, BOX_Y1 + PAD + 16);
+
+  const actStats = [
+    { label: 'Games Played', value: `🎮 ${gamesPlayed}` },
+    { label: 'Games Won',    value: `🏆 ${gamesWon}` },
+    { label: 'Win Rate',     value: `📊 ${winRate}%` },
+    { label: 'Daily Streak', value: `🔥 ${streak} days` },
+    { label: 'Days Active',  value: `⏱ ${daysActive}` },
+  ];
+  drawStatGrid(ctx, actStats, BOX_X2 + PAD, BOX_Y1 + PAD + 30, BOX_W - PAD * 2, BOX_H - PAD * 2 - 30);
+
+  // ── BOX 3 (bottom-left): ⭐ Progress ──────────────────────────────────────
+  drawBox(ctx, BOX_X1, BOX_Y2, BOX_W, BOX_H);
+  drawBoxTitle(ctx, '⭐ Progress', BOX_X1 + PAD, BOX_Y2 + PAD + 16);
+
+  const xpPctStr = `${(xpPct * 100).toFixed(1)}%`;
+  const progStats = [
+    { label: 'Level',        value: `✦ ${userData.level}` },
+    { label: 'Current XP',   value: `⚡ ${formatNumber(xpCurrent)}` },
+    { label: 'XP Needed',    value: `🎯 ${formatNumber(xpNeeded)}` },
+    { label: 'XP Progress',  value: `📶 ${xpPctStr}` },
+    { label: 'Join Date',    value: `📅 ${joinDate}` },
+  ];
+  drawStatGrid(ctx, progStats, BOX_X1 + PAD, BOX_Y2 + PAD + 30, BOX_W - PAD * 2, BOX_H - PAD * 2 - 30);
+
+  // ── BOX 4 (bottom-right): 🎒 Collection ───────────────────────────────────
+  drawBox(ctx, BOX_X2, BOX_Y2, BOX_W, BOX_H);
+  drawBoxTitle(ctx, '🎒 Collection', BOX_X2 + PAD, BOX_Y2 + PAD + 16);
+
+  const colStats = [
+    { label: 'Items Owned',   value: `🎒 ${itemCount}` },
+    { label: 'Mutations',     value: `🧬 ${mutCount}` },
+    { label: 'Achievements',  value: `🏅 ${achCount}` },
+    { label: 'Referrals',     value: `🤝 ${(userData.referrals || []).length}` },
+    { label: 'Investments',   value: `📦 ${(userData.investments || []).length}` },
+  ];
+  drawStatGrid(ctx, colStats, BOX_X2 + PAD, BOX_Y2 + PAD + 30, BOX_W - PAD * 2, BOX_H - PAD * 2 - 30);
 
   // ── Footer ─────────────────────────────────────────────────────────────────
-  ctx.fillStyle = 'rgba(255,255,255,0.18)';
-  ctx.font = '12px sans-serif';
-  ctx.fillText(`${discordUser.username} • Economy Profile`, 28, H - 14);
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.font = '13px sans-serif';
+  ctx.fillText(`${discordUser.username} • Economy Profile`, 28, H - 12);
   ctx.textAlign = 'right';
-  ctx.fillText('Use /stats for full details', W - 28, H - 14);
+  ctx.fillText('Use /stats for full details', W - 28, H - 12);
   ctx.textAlign = 'left';
 
   return canvas.toBuffer('image/png');
@@ -295,21 +264,55 @@ async function generateProfileCard(discordUser, userData, guildId) {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Draw a small section label */
-function drawSectionLabel(ctx, text, x, y) {
-  ctx.fillStyle = 'rgba(155,89,182,0.8)';
-  ctx.font = 'bold 13px sans-serif';
-  ctx.fillText(text.toUpperCase(), x, y + 14);
+/**
+ * Draw a semi-transparent frosted box for a stat section.
+ */
+function drawBox(ctx, x, y, w, h) {
+  ctx.save();
+  ctx.fillStyle = 'rgba(255,255,255,0.07)';
+  roundRect(ctx, x, y, w, h, 12);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(155,89,182,0.35)';
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, x, y, w, h, 12);
+  ctx.stroke();
+  ctx.restore();
 }
 
-/** Draw a single stat cell with label + value */
-function drawStatCell(ctx, label, value, x, y) {
-  ctx.fillStyle = 'rgba(255,255,255,0.38)';
-  ctx.font = '12px sans-serif';
-  ctx.fillText(label, x, y);
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 18px sans-serif';
-  ctx.fillText(value, x, y + 22);
+/**
+ * Draw a bold section title inside a box.
+ */
+function drawBoxTitle(ctx, text, x, y) {
+  ctx.fillStyle = '#c9b8ff';
+  ctx.font = 'bold 15px sans-serif';
+  ctx.fillText(text, x, y);
+}
+
+/**
+ * Draw a grid of label/value pairs inside a box.
+ * Stats are laid out in two columns.
+ */
+function drawStatGrid(ctx, stats, x, y, w, h) {
+  const cols = 2;
+  const colW = w / cols;
+  const rowH = Math.min(h / Math.ceil(stats.length / cols), 46);
+
+  stats.forEach((stat, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const sx  = x + col * colW;
+    const sy  = y + row * rowH;
+
+    // Label
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '12px sans-serif';
+    ctx.fillText(stat.label, sx, sy + 14);
+
+    // Value — large, white, bold
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 18px sans-serif';
+    ctx.fillText(stat.value, sx, sy + 34);
+  });
 }
 
 function roundRect(ctx, x, y, w, h, r) {

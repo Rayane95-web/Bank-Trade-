@@ -48,6 +48,9 @@ module.exports = {
       db.saveUser(user);
       saveGuilds(guilds);
 
+      // Track weekly deposit for guild leaderboard
+      db.recordGuildDeposit(user.guildId_economy, netAmount);
+
       return interaction.reply({
         embeds: [successEmbed('Contribution Made! 🏦',
           `You contributed **${formatNumber(amount)}** coins to **${guild.name}**.\nTax (${(config.guilds.treasuryTaxRate * 100).toFixed(0)}%): **-${formatNumber(tax)}** coins\nNet added to treasury: **+${formatNumber(netAmount)}** coins\nNew treasury: **${formatNumber(guild.treasury)}** coins`)],
